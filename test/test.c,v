@@ -1,0 +1,89 @@
+head	1.4;
+access;
+symbols;
+locks; strict;
+comment	@ * @;
+
+
+1.4
+date	2015.11.18.09.04.38;	author chenhai;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2015.11.18.09.01.37;	author chenhai;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2015.11.18.08.32.12;	author chenhai;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.11.18.08.27.04;	author chenhai;	state Exp;
+branches;
+next	;
+
+
+desc
+@this is an important demonstration file
+@
+
+
+1.4
+log
+@$id->$Id
+@
+text
+@/* this is an important file 
+filename:$RCSfile: test.c,v $
+ */
+#include <stdio.h>
+#include <stdlib.h>
+static char *RCSinfo="$Id$";
+int main()
+{
+    char p='x';
+    char c[] = "chenhai";
+    printf("%c\n", c[4]);
+    return 0;
+}
+@
+
+
+1.3
+log
+@Added $RCSfile$ and $id$ strings
+@
+text
+@d2 1
+a2 1
+filename:$RCSfile$
+d6 1
+a6 1
+static char *RCSinfo="$id$";
+@
+
+
+1.2
+log
+@added char p
+@
+text
+@d2 1
+a2 1
+ *
+d6 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d8 1
+a8 1
+    /*char p='x';*/
+@
