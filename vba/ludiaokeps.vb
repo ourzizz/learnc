@@ -70,7 +70,7 @@ Function prtArray(ps02() As Integer)
     Next
 End Function
 
-Function fillExcel(ObjectRow As Integer, ps02() As Integer, sheetIndex As Integer)
+Function fillExcel(sheetIndex As Integer,ObjectRow As Integer, ps02() As Integer)
     Dim sht
     Set sht = ThisWorkbook.Sheets(sheetIndex)
     For i = 0 To UBound(ps02)
@@ -89,7 +89,7 @@ Function condition(ps02() As Integer,sheetIndex As Integer, ObjectRow As Integer
         End If
         sheet2_row = sheet2_row + 1
     Wend
-    Call fillExcel(ObjectRow, ps02, sheetIndex)
+    Call fillExcel(sheetIndex,ObjectRow, ps02)
 End Function
 
 Sub ps02Main()
@@ -123,7 +123,7 @@ Sub ps02Main()
         End If
         sheet2_row = sheet2_row + 1
     Wend
-    CALL fillExcel(27, ps02,6)
+    CALL fillExcel(6,27, ps02)
     ''}}}}--------------------
 
     CALL condition(ps02, 6,28, 34, "", 15, "") '具有职业资格的
