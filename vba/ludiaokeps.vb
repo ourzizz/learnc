@@ -118,7 +118,7 @@ Sub ps02Main()
     sheet2_row = 3
     InitPsArray ps02
     While Sheet2.Cells(sheet2_row, 2) <> ""
-        If Sheet2.Cells(sheet2_row, 13) <> "" And Sheet2.Cells(sheet2_row, 14) <> "" Then
+        If Sheet2.Cells(sheet2_row, 12) <> "" And Sheet2.Cells(sheet2_row, 13) <> "" Then
             CALL FillPsArray(sheet2_row, ps02)
         End If
         sheet2_row = sheet2_row + 1
