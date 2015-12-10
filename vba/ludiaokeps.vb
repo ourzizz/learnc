@@ -5,6 +5,22 @@ sub ps0()
     sheet4.cells(11,7)=sheet1.cells(3,5)'单位层次
     sheet4.cells(11,17)=sheet1.cells(3,6)'单位技术领域
 end sub
+
+Function InitPsArray(ps02() As Integer)
+    For i = 0 To UBound(ps02)
+        ps02(i) = 0
+    Next
+End Function
+
+Function fillExcel(sheetIndex As Integer,ObjectRow As Integer,ObjectCol As Integer, ps02() As Integer)
+    '表号、行号、列号、数组
+    Dim sht
+    Set sht = ThisWorkbook.Sheets(sheetIndex)
+    For i = 0 To UBound(ps02)
+        sht.Cells(ObjectRow, ObjectCol + i) = ps02(i)
+    Next
+End Function
+
 Function GetAge(StrAge As String)
     StrAge = Mid(StrAge, 1, 4)
     GetAge = 2016 - Val(StrAge)
@@ -58,25 +74,7 @@ Function FillPsArray(sheet2_row, ps02() As Integer)
     End If
 End Function
 
-Function InitPsArray(ps02() As Integer)
-    For i = 0 To UBound(ps02)
-        ps02(i) = 0
-    Next
-End Function
 
-Function prtArray(ps02() As Integer)
-    For i = 0 To UBound(ps02)
-        MsgBox ps02(i)
-    Next
-End Function
-
-Function fillExcel(sheetIndex As Integer,ObjectRow As Integer, ps02() As Integer)
-    Dim sht
-    Set sht = ThisWorkbook.Sheets(sheetIndex)
-    For i = 0 To UBound(ps02)
-        sht.Cells(ObjectRow, i + 5) = ps02(i)
-    Next
-End Function
 
 Function condition(ps02() As Integer,sheetIndex As Integer, ObjectRow As Integer, condtionColA As Integer, conditionStrA As String, condtionColB As Integer, conditionStrB As String)
     '为了if第一个条件也能默认成立，在sheet2的AH一列只要有数据的全置为1，好些默认条件condtionColA=34 string=就为空
@@ -89,7 +87,7 @@ Function condition(ps02() As Integer,sheetIndex As Integer, ObjectRow As Integer
         End If
         sheet2_row = sheet2_row + 1
     Wend
-    Call fillExcel(sheetIndex,ObjectRow, ps02)
+    Call fillExcel(sheetIndex,ObjectRow,5,ps02)
 End Function
 
 Sub ps02Main()
@@ -123,7 +121,7 @@ Sub ps02Main()
         End If
         sheet2_row = sheet2_row + 1
     Wend
-    CALL fillExcel(6,27, ps02)
+    CALL fillExcel(6,27,5,ps02)
     ''}}}}--------------------
 
     CALL condition(ps02, 6,28, 34, "", 15, "") '具有职业资格的
