@@ -1,3 +1,10 @@
+sub ps0()
+    sheet4.cells(11,3)=sheet1.cells(3,2)'填写单位名
+    sheet4.cells(11,4)=sheet1.cells(3,3)'组织机构代码
+    sheet4.cells(11,5)=sheet1.cells(3,4)'机构类型
+    sheet4.cells(11,7)=sheet1.cells(3,5)'单位层次
+    sheet4.cells(11,17)=sheet1.cells(3,6)'单位技术领域
+end sub
 
 Function GetAge(StrAge As String)
     StrAge = Mid(StrAge, 1, 4)
@@ -88,28 +95,25 @@ Function fillExcel(ps02_row As Integer, ps02() As Integer)
 End Function
 
 '-------------------------------------------------------------------------------------------------------------------
-'不能解决字符串转换为运算条件，封装只能先搁置
-'Function judege(sheet2_row as Integer,condition as String)
-'    假如string为 Sheet2.Cells(sheet2_row, 12) <> "" and  Sheet2.Cells(sheet2_row, 4) = "女"'
-'end Function
-'Function condition(ps02() as Integer,fillpsrow as integer,condition as string)
-'    dim sheet2_row as Integer
-'    sheet2_row = 3
-'    InitPsArray ps02
-'    While Sheet2.Cells(sheet2_row, 2) <> ""
-'        if judege(sheet2_row,condition) then
-'            Call FillPsArray(sheet2_row, ps02)
-'        end if
-'        sheet2_row = sheet2_row + 1
-'    Wend
-'    Call fillExcel(11, ps02)
-'end Function
+Function condition(ps02() as Integer,ObjectRow as integer,sheet2_col as Integer,ifcondition as string)
+    dim sheet2_row as Integer
+    sheet2_row = 3
+    InitPsArray ps02
+    While Sheet2.Cells(sheet2_row, 2) <> ""
+        if sheet2.cells(sheet2_row, sheet2_col) = ifcondition  then
+            Call FillPsArray(sheet2_row, ps02)
+        end if
+        sheet2_row = sheet2_row + 1
+    Wend
+    Call fillExcel(ObjectRow, ps02)
+end Function
 '-------------------------------------------------------------------------------------------------------------------
 
 Sub ps02Main()
     Dim ps02(32) As Integer
     Dim sheet2_row As Integer
 
+    '-------------------------------------------------------------------------------------------------------------------
     sheet2_row = 3
     InitPsArray ps02
     While Sheet2.Cells(sheet2_row, 2) <> ""
@@ -117,6 +121,7 @@ Sub ps02Main()
         sheet2_row = sheet2_row + 1
     Wend
     Call fillExcel(11, ps02)
+    '-------------------------------------------------------------------------------------------------------------------
 
     sheet2_row = 3
     InitPsArray ps02
@@ -128,19 +133,31 @@ Sub ps02Main()
     Wend
     Call fillExcel(12, ps02)
     InitPsArray ps02
+    '-------------------------------------------------------------------------------------------------------------------
 
     sheet2_row = 3
     InitPsArray ps02
     While Sheet2.Cells(sheet2_row, 2) <> ""
-        If Sheet2.Cells(sheet2_row, 12) <> "" And Sheet2.Cells(sheet2_row, 4) = "女" Then
+        if sheet2.cells(sheet2_row, 12) <> "" and  sheet2.cells(sheet2_row, 4) <> "男" then
             Call FillPsArray(sheet2_row, ps02)
         End If
         sheet2_row = sheet2_row + 1
     Wend
     Call fillExcel(13, ps02)
+    '------------------------------------管理岗位的少数民族统计-------------------------------------------
+    sheet2_row = 3
+    InitPsArray ps02
+    While Sheet2.Cells(sheet2_row, 2) <> ""
+        if sheet2.cells(sheet2_row, 12) <> "" and  sheet2.cells(sheet2_row, 5)  <> "汉族" then
+            Call FillPsArray(sheet2_row, ps02)
+        End If
+        sheet2_row = sheet2_row + 1
+    Wend
+    Call fillExcel(13, ps02)
+    '-------------------------------------------------------------------------------------------------------------------
+    call condition(ps02,15,12,"一级职员岗位（部级正职）")
 
 End Sub
 
 
 
-'
