@@ -69,7 +69,7 @@ End Function
 
 
 Function condition(ps02() As Integer, sheetIndex As Integer, ObjectRow As Integer, condtionColA As Integer, conditionStrA As String, condtionColB As Integer, conditionStrB As String)
-    '为了if第一个条件也能默认成立，在sheet2的AH一列只要有数据的全置为1，好些默认条件condtionColA=34 string=就为空
+    '为了if第一个条件也能默认成立，
     Dim sheet2_row As Integer
     sheet2_row = 3
     InitPsArray ps02
@@ -425,6 +425,128 @@ Sub ps04Main()
     Sheet9.Cells(18, 10) = Sheet7.Cells(30, 5) '5
     Sheet9.Cells(19, 10) = Sheet7.Cells(31, 5) '6 普通工
     Sheet9.Cells(27, 10) = Sheet7.Cells(32, 5) '其他
+
+End Sub
+'--------------------------------------------------------ps05相关函数----------------------------------------------------------------
+Function FillPs05Array(sheet2_row, ps05() As Integer)
+    '表中数据必须按照下拉菜单中的数据来选择，如果自行填入，程序将不能得出正确结果
+    Dim str(12) As String
+    str(0) = "上年末已签订短期合同"
+    str(1) = "上年末已签订中期合同"
+    str(2) = "上年末已签订长期合同"
+    str(3) = "上年末已签订项目合同"
+    str(4) = "新签订短期合同    "
+    str(5) = "新签订中期合同"
+    str(6) = "新签订长期合同"
+    str(7) = "新签订项目合同"
+    str(8) = "解除聘用合同"
+    str(9) = "终止聘用合同"
+    str(10) = "未签订聘用合同(原固定用人方式)"
+    str(11) = "未签订聘用合同(签订劳动合同)"
+    str(12) = "未签订聘用合同(其他)"
+
+    ps05(0) = ps05(0) + 1
+    If Sheet2.Cells(sheet2_row, 24) = str(0) Then '上半年短期合同
+        ps05(2) = ps05(2) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(1) Then '上半年中期
+        ps05(3) = ps05(3) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(2) Then '上半年长期
+        ps05(4) = ps05(4) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(3) Then '上半年项目
+        ps05(5) = ps05(5) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(4) Then '新签订短期合同
+        ps05(6) = ps05(6) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(5) Then '新签订中期合同
+        ps05(7) = ps05(7) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(6) Then '新签订长期合同
+        ps05(8) = ps05(8) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(6) Then '新签订项目合同
+        ps05(9) = ps05(9) + 1
+    End If
+    ps05(1) = ps05(2) + ps05(3) + ps05(4) + ps05(5) + ps05(6) + ps05(7) + ps05(8) + ps05(9)
+
+    If Sheet2.Cells(sheet2_row, 24) = str(8) Then '解除聘用合同
+        ps05(10) = ps05(10) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(9) Then '终止聘用合同
+        ps05(11) = ps05(11) + 1
+    End If
+
+    If Sheet2.Cells(sheet2_row, 24) = str(10) Then '原固定用人方式
+        ps05(13) = ps05(13) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(11) Then '签订劳动合同
+        ps05(14) = ps05(14) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 24) = str(12) Then '其他
+        ps05(15) = ps05(15) + 1
+    End If
+    ps05(12) = ps05(13) + ps05(14) + ps05(15) '未签订合同的可以直接从数组中求得就不再遍历excel
+
+End Function
+
+Sub ps05Main()
+    Dim ps05(15) As Integer
+    Dim sheet2_row As Integer
+    Dim x As Integer
+    x = 0
+
+    sheet2_row = 3
+    InitPsArray ps05
+    While Sheet2.Cells(sheet2_row, 2) <> ""
+        If Sheet2.Cells(sheet2_row, 24) <> "" And Sheet2.Cells(sheet2_row, 12) <> "" Then   '管理
+            Call FillPs05Array(sheet2_row, ps05)
+        End If
+        sheet2_row = sheet2_row + 1
+    Wend
+    Call fillExcel(10, 12, 3, ps05)
+
+    sheet2_row = 3
+    InitPsArray ps05
+    While Sheet2.Cells(sheet2_row, 2) <> "" '专技人员
+        If Sheet2.Cells(sheet2_row, 13) <> "" And Sheet2.Cells(sheet2_row, 24) <> "" Then  '双肩挑
+            Call FillPs05Array(sheet2_row, ps05)
+        End If
+        sheet2_row = sheet2_row + 1
+    Wend
+    Call fillExcel(10, 13, 3, ps05)
+
+    sheet2_row = 3
+    InitPsArray ps05
+    While Sheet2.Cells(sheet2_row, 2) <> ""
+        If Sheet2.Cells(sheet2_row, 12) <> "" And Sheet2.Cells(sheet2_row, 13) <> "" And Sheet2.Cells(sheet2_row, 24) <> "" Then '双肩挑
+            Call FillPs05Array(sheet2_row, ps05)
+        End If
+        sheet2_row = sheet2_row + 1
+    Wend
+    Call fillExcel(10, 14, 3, ps05)
+
+    sheet2_row = 3
+    InitPsArray ps05
+    While Sheet2.Cells(sheet2_row, 2) <> "" '工勤
+        If Sheet2.Cells(sheet2_row, 16) <> "" And Sheet2.Cells(sheet2_row, 24) <> "" Then
+            Call FillPs05Array(sheet2_row, ps05)
+        End If
+        sheet2_row = sheet2_row + 1
+    Wend
+    Call fillExcel(10, 15, 3, ps05)
+
+    sheet2_row = 3
+    InitPsArray ps05
+    While Sheet2.Cells(sheet2_row, 2) <> "" '其他
+        If Sheet2.Cells(sheet2_row, 17) <> "" And Sheet2.Cells(sheet2_row, 24) <> "" Then
+            Call FillPs05Array(sheet2_row, ps05)
+        End If
+        sheet2_row = sheet2_row + 1
+    Wend
+    Call fillExcel(10, 16, 3, ps05)
 End Sub
 
 Sub Mian()
@@ -432,5 +554,6 @@ Sub Mian()
     ps02Main
     ps03Main
     ps04Main
+    ps05Main
     MsgBox "已成功生成"
 End Sub
