@@ -565,6 +565,9 @@ Sub ps05Main()
     Call fillExcel(10, 16, 3, ps05)
 End Sub
 
+FUNCTION ps10Main ()
+END FUNCTION
+
 Sub Mian()
     system = Sheet1.Cells(3, 1)
     industry = Sheet1.Cells(3, 6)
