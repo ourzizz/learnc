@@ -1,3 +1,10 @@
+Dim industry As String
+Dim system As String
+Dim level As String
+
+Sub globaltest()
+    globalx = 3
+End Sub
 Function InitPsArray(ps02() As Integer)
     For i = 0 To UBound(ps02)
         ps02(i) = 0
@@ -17,6 +24,10 @@ Function GetAge(StrAge As String)
     StrAge = Mid(StrAge, 1, 4)
     GetAge = 2016 - Val(StrAge)
 End Function
+
+FUNCTION ps01 ()
+
+END FUNCTION
 
 Function FillPsArray(sheet2_row, ps02() As Integer)
     ps02(0) = ps02(0) + 1
@@ -64,6 +75,38 @@ Function FillPsArray(sheet2_row, ps02() As Integer)
     ElseIf age >= 60 Then
         ps02(18) = ps02(18) + 1
     End If
+
+    Select Case system
+        Case "1.党的系统"
+            ps02(19) = ps02(0)
+        Case "2.行政系统"
+            ps02(20) = ps02(0)
+        Case "3.人大"
+            ps02(21) = ps02(0)
+        Case "4.政协"
+            ps02(22) = ps02(0)
+        Case "5.法院"
+            ps02(23) = ps02(0)
+        Case "6.检察院"
+            ps02(24) = ps02(0)
+        Case "7.群众团体"
+            ps02(25) = ps02(0)
+        Case "8.民主党派"
+            ps02(26) = ps02(0)
+        Case "9.军队"
+            ps02(27) = ps02(0)
+        Case Else
+    End Select
+
+
+    If level = "3市州级单位" Then
+        ps02(30) = ps02(0)
+    ElseIf level = "4县级单位" Then
+        ps02(31) = ps02(0)
+    Else
+        ps02(32) = ps02(0)
+    End If
+
 End Function
 
 
@@ -430,6 +473,7 @@ End Sub
 '--------------------------------------------------------ps05相关函数----------------------------------------------------------------
 Function FillPs05Array(sheet2_row, ps05() As Integer)
     '表中数据必须按照下拉菜单中的数据来选择，如果自行填入，程序将不能得出正确结果
+    '表中数据必须按照下拉菜单中的数据来选择，如果自行填入，程序将不能得出正确结果
     ps05(0) = ps05(0) + 1
     Select Case Sheet2.Cells(sheet2_row, 24)
         Case "上年末已签订短期合同"
@@ -522,6 +566,10 @@ Sub ps05Main()
 End Sub
 
 Sub Mian()
+    system = Sheet1.Cells(3, 1)
+    industry = Sheet1.Cells(3, 6)
+    level = Sheet1.Cells(3, 5)
+
     ps0Main
     ps02Main
     ps03Main
