@@ -9,15 +9,17 @@ Function InitPsArray(ps02() As Integer)
         ps02(i) = 0
     Next
 End Function
-
-Function fillExcel(sheetIndex As Integer, ObjectRow As Integer, ObjectCol As Integer, ps02() As Integer)
+Function fillExcel(sheetIndex As Integer, ObjectRow As Integer, ObjectCol As Integer, ps() As Integer)
     '表号、行号、列号、数组
     Dim sht
     Set sht = ThisWorkbook.Sheets(sheetIndex)
-    For i = 0 To UBound(ps02)
-        sht.Cells(ObjectRow, ObjectCol + i) = ps02(i)
+    For i = 0 To UBound(ps)
+        If ps(i) <> 0 Then
+            sht.Cells(ObjectRow, ObjectCol + i) = ps(i)
+        End If
     Next
 End Function
+
 
 Function GetAge(StrAge As String)
     StrAge = Mid(StrAge, 1, 4)
@@ -72,7 +74,7 @@ Function FillPs01Array(sheet2_row, ps01() As Integer)
     Else
         ps01(20) = 1
     End If
-    
+
     ps01(21) = Sheet1.Cells(3, 10)
     ps01(22) = Sheet1.Cells(3, 11)
     ps01(23) = Sheet1.Cells(3, 12)
@@ -103,7 +105,7 @@ Sub ps01Main()
     Else
         Call fillExcel(5, 22, 4, ps01)
     End If
-    
+
     If system Like "*党的*" Then
         Call fillExcel(5, 23, 4, ps01)
     ElseIf system Like "*行政*" Then
@@ -132,12 +134,12 @@ Sub ps01Main()
     Else
         Call fillExcel(5, 36, 4, ps01)
     End If
-    
-sheet2_row = 0
+
+    sheet2_row = 0
 End Sub
 
 Function FillPsArray(sheet2_row, ps02() As Integer)
-        ps02(0) = ps02(0) + 1
+    ps02(0) = ps02(0) + 1
     If Sheet2.Cells(sheet2_row, 4) = "女" Then
         ps02(1) = ps02(1) + 1
     End If
@@ -147,18 +149,20 @@ Function FillPsArray(sheet2_row, ps02() As Integer)
     If Sheet2.Cells(sheet2_row, 10) <> "" Then
         ps02(3) = ps02(3) + 1
     End If
-    If Sheet2.Cells(sheet2_row, 7) = "博士" Then
+    If Sheet2.Cells(sheet2_row, 8) Like "*博士*" Then
         ps02(4) = ps02(4) + 1
     End If
-    If Sheet2.Cells(sheet2_row, 7) = "硕士" Then
+    If Sheet2.Cells(sheet2_row, 8) Like "*硕士*" Then
         ps02(5) = ps02(5) + 1
+    End If
+    If Sheet2.Cells(sheet2_row, 7) Like "*研究*" Then
         ps02(7) = ps02(7) + 1
     End If
     ps02(6) = 0 '港澳台
     If Sheet2.Cells(sheet2_row, 7) = "本科" Then
         ps02(8) = ps02(8) + 1
     End If
-    If Sheet2.Cells(sheet2_row, 7) = "专科" Then
+    If Sheet2.Cells(sheet2_row, 7) Like "*专科*" Then
         ps02(9) = ps02(9) + 1
     End If
     If Sheet2.Cells(sheet2_row, 7) = "中专及以下" Then
@@ -183,7 +187,7 @@ Function FillPsArray(sheet2_row, ps02() As Integer)
         ps02(18) = ps02(18) + 1
     End If
 
-        Select Case system
+    Select Case system
         Case "1.党的系统"
             ps02(19) = ps02(0)
         Case "2.行政系统"
@@ -213,7 +217,7 @@ Function FillPsArray(sheet2_row, ps02() As Integer)
     Else
         ps02(32) = ps02(0)
     End If
-    
+
 End Function
 
 
@@ -245,7 +249,7 @@ Sub ps02Main()
 
     Call condition(ps02, 6, 11, 34, "", 2, "") '总计
     Call condition(ps02, 6, 12, 34, "", 12, "") '管理人员小计
-    Call condition(ps02, 6, 13, 4, "女", 2, "")
+    Call condition(ps02, 6, 13, 4, "女", 12, "")
     Call condition(ps02, 6, 14, 5, "少数民族", 12, "")
     Call condition(ps02, 6, 15, 12, "一级职员岗位（部级正职）", 2, "")
     Call condition(ps02, 6, 16, 12, "二级职员岗位（部级副职）", 2, "")
@@ -253,14 +257,15 @@ Sub ps02Main()
     Call condition(ps02, 6, 18, 12, "四级职员岗位（厅级副职）", 2, "")
     Call condition(ps02, 6, 19, 12, "五级职员岗位（处级正职）", 2, "")
     Call condition(ps02, 6, 20, 12, "六级职员岗位（处级副职）", 2, "")
-    Call condition(ps02, 6, 21, 12, "七级职员岗位（科级正职）", 2, "")
+    Call condition(ps02, 6, 21, 12, "七级职员岗位（科级正职）", 3, "")
     Call condition(ps02, 6, 22, 12, "八级职员岗位（科级副职）", 2, "")
     Call condition(ps02, 6, 23, 12, "九级职员岗位（科员）", 2, "")
     Call condition(ps02, 6, 24, 12, "十级职员岗位（办事员）", 2, "")
     Call condition(ps02, 6, 25, 12, "其他等级人员", 2, "")
 
     Call condition(ps02, 6, 26, 34, "", 13, "") '专技小计
-    '"-----{{ 双肩挑的无法用函数解决
+    '"-----{
+    双肩挑的无法用函数解决
     sheet2_row = 3
     InitPsArray ps02
     While Sheet2.Cells(sheet2_row, 2) <> ""
@@ -356,13 +361,13 @@ Function FillPs03Array(sheet2_row, ps03() As Integer)
 End Function
 
 Sub ps03Main()
-         Dim ps03(17) As Integer
+    Dim ps03(17) As Integer
     Dim sheet2_row As Integer
     Dim CengCiRow As Integer
     Dim cengci As String
     CengCiRow = 0
     '-----------------------本段为了确定层次 市 县 乡
-      cengci = Mid(Sheet1.Cells(3, 5), 1, 1)
+    cengci = Mid(Sheet1.Cells(3, 5), 1, 1)
 
     If cengci = "3" Then
         CengCiRow = 21
@@ -461,7 +466,7 @@ Sub ps04shuangjiantiao()
     While Sheet2.Cells(sheet2_row, 2) <> ""
         If Sheet2.Cells(sheet2_row, 12) <> "" And Sheet2.Cells(sheet2_row, 13) <> "" Then
             level = Mid(Sheet2.Cells(sheet2_row, 13), 5, 6)
-                ps04(0) = ps04(0) + 1
+            ps04(0) = ps04(0) + 1
             If level = "一级" Then
                 ps04(1) = ps04(1) + 1
             ElseIf level = "二级" Then
@@ -525,61 +530,61 @@ Sub ps04Main()
     Sheet9.Cells(27, 5) = Sheet6.Cells(25, 5) '其他
 
 
-     Sheet9.Cells(13, 6) = Sheet6.Cells(26, 5) '专技 小计
-     Sheet9.Cells(14, 6) = Sheet6.Cells(31, 5) '1
-     Sheet9.Cells(15, 6) = Sheet6.Cells(32, 5) '2
-     Sheet9.Cells(16, 6) = Sheet7.Cells(11, 5) '3
-     Sheet9.Cells(17, 6) = Sheet7.Cells(12, 5) '4
-     Sheet9.Cells(18, 6) = Sheet7.Cells(13, 5) '5
-     Sheet9.Cells(19, 6) = Sheet7.Cells(14, 5) '6
-     Sheet9.Cells(20, 6) = Sheet7.Cells(15, 5) '7
-     Sheet9.Cells(21, 6) = Sheet7.Cells(16, 5) '8
-     Sheet9.Cells(22, 6) = Sheet7.Cells(17, 5) '9
-     Sheet9.Cells(23, 6) = Sheet7.Cells(18, 5) '10
-     Sheet9.Cells(24, 6) = Sheet7.Cells(19, 5) '11
-     Sheet9.Cells(25, 6) = Sheet7.Cells(20, 5) '12
-     Sheet9.Cells(26, 6) = Sheet7.Cells(21, 5) '13
-     Sheet9.Cells(27, 6) = Sheet7.Cells(22, 5) '其他
+    Sheet9.Cells(13, 6) = Sheet6.Cells(26, 5) '专技 小计
+    Sheet9.Cells(14, 6) = Sheet6.Cells(31, 5) '1
+    Sheet9.Cells(15, 6) = Sheet6.Cells(32, 5) '2
+    Sheet9.Cells(16, 6) = Sheet7.Cells(11, 5) '3
+    Sheet9.Cells(17, 6) = Sheet7.Cells(12, 5) '4
+    Sheet9.Cells(18, 6) = Sheet7.Cells(13, 5) '5
+    Sheet9.Cells(19, 6) = Sheet7.Cells(14, 5) '6
+    Sheet9.Cells(20, 6) = Sheet7.Cells(15, 5) '7
+    Sheet9.Cells(21, 6) = Sheet7.Cells(16, 5) '8
+    Sheet9.Cells(22, 6) = Sheet7.Cells(17, 5) '9
+    Sheet9.Cells(23, 6) = Sheet7.Cells(18, 5) '10
+    Sheet9.Cells(24, 6) = Sheet7.Cells(19, 5) '11
+    Sheet9.Cells(25, 6) = Sheet7.Cells(20, 5) '12
+    Sheet9.Cells(26, 6) = Sheet7.Cells(21, 5) '13
+    Sheet9.Cells(27, 6) = Sheet7.Cells(22, 5) '其他
 
-     Sheet9.Cells(13, 7) = Sheet6.Cells(26, 5) '专技 小计
-     Sheet9.Cells(14, 7) = Sheet6.Cells(31, 5) '1
-     Sheet9.Cells(15, 7) = Sheet6.Cells(32, 5) '2
-     Sheet9.Cells(16, 7) = Sheet7.Cells(11, 5) '3
-     Sheet9.Cells(17, 7) = Sheet7.Cells(12, 5) '4
-     Sheet9.Cells(18, 7) = Sheet7.Cells(13, 5) '5
-     Sheet9.Cells(19, 7) = Sheet7.Cells(14, 5) '6
-     Sheet9.Cells(20, 7) = Sheet7.Cells(15, 5) '7
-     Sheet9.Cells(21, 7) = Sheet7.Cells(16, 5) '8
-     Sheet9.Cells(22, 7) = Sheet7.Cells(17, 5) '9
-     Sheet9.Cells(23, 7) = Sheet7.Cells(18, 5) '10
-     Sheet9.Cells(24, 7) = Sheet7.Cells(19, 5) '11
-     Sheet9.Cells(25, 7) = Sheet7.Cells(20, 5) '12
-     Sheet9.Cells(26, 7) = Sheet7.Cells(21, 5) '13
-     Sheet9.Cells(27, 7) = Sheet7.Cells(22, 5) '其他
+    Sheet9.Cells(13, 7) = Sheet6.Cells(26, 5) '专技 小计
+    Sheet9.Cells(14, 7) = Sheet6.Cells(31, 5) '1
+    Sheet9.Cells(15, 7) = Sheet6.Cells(32, 5) '2
+    Sheet9.Cells(16, 7) = Sheet7.Cells(11, 5) '3
+    Sheet9.Cells(17, 7) = Sheet7.Cells(12, 5) '4
+    Sheet9.Cells(18, 7) = Sheet7.Cells(13, 5) '5
+    Sheet9.Cells(19, 7) = Sheet7.Cells(14, 5) '6
+    Sheet9.Cells(20, 7) = Sheet7.Cells(15, 5) '7
+    Sheet9.Cells(21, 7) = Sheet7.Cells(16, 5) '8
+    Sheet9.Cells(22, 7) = Sheet7.Cells(17, 5) '9
+    Sheet9.Cells(23, 7) = Sheet7.Cells(18, 5) '10
+    Sheet9.Cells(24, 7) = Sheet7.Cells(19, 5) '11
+    Sheet9.Cells(25, 7) = Sheet7.Cells(20, 5) '12
+    Sheet9.Cells(26, 7) = Sheet7.Cells(21, 5) '13
+    Sheet9.Cells(27, 7) = Sheet7.Cells(22, 5) '其他
 
-     Sheet9.Cells(13, 9) = Sheet7.Cells(23, 5) '工勤小计
-     Sheet9.Cells(14, 9) = Sheet7.Cells(26, 5) '1
-     Sheet9.Cells(15, 9) = Sheet7.Cells(27, 5) '2
-     Sheet9.Cells(16, 9) = Sheet7.Cells(28, 5) '3
-     Sheet9.Cells(17, 9) = Sheet7.Cells(29, 5) '4
-     Sheet9.Cells(18, 9) = Sheet7.Cells(30, 5) '5
-     Sheet9.Cells(19, 9) = Sheet7.Cells(31, 5) '6 普通工
-     Sheet9.Cells(27, 9) = Sheet7.Cells(32, 5) '其他
+    Sheet9.Cells(13, 9) = Sheet7.Cells(23, 5) '工勤小计
+    Sheet9.Cells(14, 9) = Sheet7.Cells(26, 5) '1
+    Sheet9.Cells(15, 9) = Sheet7.Cells(27, 5) '2
+    Sheet9.Cells(16, 9) = Sheet7.Cells(28, 5) '3
+    Sheet9.Cells(17, 9) = Sheet7.Cells(29, 5) '4
+    Sheet9.Cells(18, 9) = Sheet7.Cells(30, 5) '5
+    Sheet9.Cells(19, 9) = Sheet7.Cells(31, 5) '6 普通工
+    Sheet9.Cells(27, 9) = Sheet7.Cells(32, 5) '其他
 
-     Sheet9.Cells(13, 10) = Sheet7.Cells(23, 5) '工勤小计
-     Sheet9.Cells(14, 10) = Sheet7.Cells(26, 5) '1
-     Sheet9.Cells(15, 10) = Sheet7.Cells(27, 5) '2
-     Sheet9.Cells(16, 10) = Sheet7.Cells(28, 5) '3
-     Sheet9.Cells(17, 10) = Sheet7.Cells(29, 5) '4
-     Sheet9.Cells(18, 10) = Sheet7.Cells(30, 5) '5
-     Sheet9.Cells(19, 10) = Sheet7.Cells(31, 5) '6 普通工
-     Sheet9.Cells(27, 10) = Sheet7.Cells(32, 5) '其他
+    Sheet9.Cells(13, 10) = Sheet7.Cells(23, 5) '工勤小计
+    Sheet9.Cells(14, 10) = Sheet7.Cells(26, 5) '1
+    Sheet9.Cells(15, 10) = Sheet7.Cells(27, 5) '2
+    Sheet9.Cells(16, 10) = Sheet7.Cells(28, 5) '3
+    Sheet9.Cells(17, 10) = Sheet7.Cells(29, 5) '4
+    Sheet9.Cells(18, 10) = Sheet7.Cells(30, 5) '5
+    Sheet9.Cells(19, 10) = Sheet7.Cells(31, 5) '6 普通工
+    Sheet9.Cells(27, 10) = Sheet7.Cells(32, 5) '其他
 
 End Sub
 '--------------------------------------------------------ps05相关函数----------------------------------------------------------------
 Function FillPs05Array(sheet2_row, ps05() As Integer)
     '表中数据必须按照下拉菜单中的数据来选择，如果自行填入，程序将不能得出正确结果
-          '表中数据必须按照下拉菜单中的数据来选择，如果自行填入，程序将不能得出正确结果
+    '表中数据必须按照下拉菜单中的数据来选择，如果自行填入，程序将不能得出正确结果
     ps05(0) = ps05(0) + 1
     Select Case Sheet2.Cells(sheet2_row, 24)
         Case "上年末已签订短期合同"
@@ -844,31 +849,31 @@ Function FillPs07456Array(ps07456() As Integer)
     ps07456(19) = Sheet6.Cells(27, 5)
 End Function
 Function FillPs077Array(ps077() As Integer)
-ps077(0) = Sheet12.Cells(2, 3)  '农林
-ps077(1) = Sheet12.Cells(19, 3)  '采矿业
-ps077(2) = Sheet12.Cells(20, 3)  '制造业
-ps077(3) = Sheet12.Cells(21, 3)  '电力、热力、燃气及水生产和供应业
-ps077(4) = Sheet12.Cells(22, 3)  '建筑业
-ps077(5) = Sheet12.Cells(23, 3)  '批发和零售业
-ps077(6) = Sheet12.Cells(24, 3)  '交通运输、仓储和邮政业
-ps077(7) = Sheet12.Cells(25, 3)  '住宿和餐饮业
-ps077(8) = Sheet12.Cells(26, 3)  '信息传输、软件和信息技术服务业
-ps077(9) = Sheet12.Cells(27, 3)  '金融业
-ps077(10) = Sheet12.Cells(28, 3) '房地产业
-ps077(11) = Sheet12.Cells(29, 3) '租赁和商务服务业
-ps077(12) = Sheet12.Cells(30, 3) '科学研究和技术服务业
-ps077(13) = Sheet13.Cells(31, 3) '水利、环境和公共设施管理业
-ps077(14) = Sheet13.Cells(13, 3) '居民服务、修理和其他服务业
-ps077(15) = Sheet13.Cells(14, 3) '教育
-ps077(16) = Sheet13.Cells(21, 3) '卫生和社会工作
-ps077(17) = Sheet13.Cells(26, 3) '文化、体育和娱乐业
-ps077(18) = Sheet13.Cells(29, 3) '公共管理、社会保障和社会组织
-ps077(19) = Sheet13.Cells(30, 3) '国际组织
-ps077(20) = 0 '中央
-ps077(21) = 0 '省（区、市）
-ps077(22) = Sheet13.Cells(16, 15) '地（市、州、盟）
-ps077(23) = Sheet13.Cells(16, 16) '县（市、区、旗）
-ps077(24) = Sheet13.Cells(16, 17) '乡（镇）
+    ps077(0) = Sheet12.Cells(2, 3)  '农林
+    ps077(1) = Sheet12.Cells(19, 3)  '采矿业
+    ps077(2) = Sheet12.Cells(20, 3)  '制造业
+    ps077(3) = Sheet12.Cells(21, 3)  '电力、热力、燃气及水生产和供应业
+    ps077(4) = Sheet12.Cells(22, 3)  '建筑业
+    ps077(5) = Sheet12.Cells(23, 3)  '批发和零售业
+    ps077(6) = Sheet12.Cells(24, 3)  '交通运输、仓储和邮政业
+    ps077(7) = Sheet12.Cells(25, 3)  '住宿和餐饮业
+    ps077(8) = Sheet12.Cells(26, 3)  '信息传输、软件和信息技术服务业
+    ps077(9) = Sheet12.Cells(27, 3)  '金融业
+    ps077(10) = Sheet12.Cells(28, 3) '房地产业
+    ps077(11) = Sheet12.Cells(29, 3) '租赁和商务服务业
+    ps077(12) = Sheet12.Cells(30, 3) '科学研究和技术服务业
+    ps077(13) = Sheet13.Cells(31, 3) '水利、环境和公共设施管理业
+    ps077(14) = Sheet13.Cells(13, 3) '居民服务、修理和其他服务业
+    ps077(15) = Sheet13.Cells(14, 3) '教育
+    ps077(16) = Sheet13.Cells(21, 3) '卫生和社会工作
+    ps077(17) = Sheet13.Cells(26, 3) '文化、体育和娱乐业
+    ps077(18) = Sheet13.Cells(29, 3) '公共管理、社会保障和社会组织
+    ps077(19) = Sheet13.Cells(30, 3) '国际组织
+    ps077(20) = 0 '中央
+    ps077(21) = 0 '省（区、市）
+    ps077(22) = Sheet13.Cells(16, 15) '地（市、州、盟）
+    ps077(23) = Sheet13.Cells(16, 16) '县（市、区、旗）
+    ps077(24) = Sheet13.Cells(16, 17) '乡（镇）
 End Function
 
 
@@ -879,7 +884,7 @@ Sub ps07456Main()
     Call FillPs077Array(ps077)
     Call fillExcel(16, 12, 4, ps07456)
     Call fillExcel(19, 13, 4, ps077)
-    
+
     If CityLevel = "3市州级单位" Then
         Call fillExcel(16, 15, 4, ps07456)
     ElseIf CityLevel = "4县级单位" Then
@@ -1037,7 +1042,7 @@ Function GetPs08Line(ps08line As Integer, ps08sheetIndex As Integer)
         Case Else
             ps08line = 36
             ps08sheetIndex = 24
-        End Select
+    End Select
 End Function
 
 Sub ps08Main()
@@ -1136,20 +1141,374 @@ Sub ps08Main()
             Next
     End Select
 End Sub
+'ps03-sheet6 11.1:sheet29
+Function SumArray(arraysrc() As Integer, arraytmp() As Integer)
+    For i = 0 To UBound(arraysrc)
+        arraysrc(i) = arraysrc(i) + arraytmp(i)
+    Next
+End Function
+
+Function fillPs11Array(sheetIndex As Integer, sheetLine As Integer, ps11() As Integer)
+    Dim sht
+    Set sht = ThisWorkbook.Sheets(sheetIndex)
+    ps11(0) = sht.Cells(sheetLine, 5)                               '总数
+    ps11(1) = sht.Cells(sheetLine, 6)                               '女性
+    ps11(2) = sht.Cells(sheetLine, 7)                              '少数民族
+    ps11(3) = sht.Cells(sheetLine, 8)                              '中共党员
+    ps11(4) = sht.Cells(sheetLine, 9)                              '博士
+    ps11(5) = sht.Cells(sheetLine, 10)                              '硕士
+    ps11(6) = sht.Cells(sheetLine, 12)                              '研究生
+    ps11(7) = sht.Cells(sheetLine, 13)                              '大学本科
+    ps11(8) = sht.Cells(sheetLine, 14)                              '大学专科
+    ps11(9) = sht.Cells(sheetLine, 15) + sht.Cells(sheetLine, 16)   '中专及以下
+    ps11(10) = sht.Cells(sheetLine, 17)                             '35岁及以下
+    ps11(11) = sht.Cells(sheetLine, 18)                             '36岁-40岁
+    ps11(12) = sht.Cells(sheetLine, 19)                             '41岁-45岁
+    ps11(13) = sht.Cells(sheetLine, 20)                             '46岁-50岁
+    ps11(14) = sht.Cells(sheetLine, 21)                             '51岁-54岁
+    ps11(15) = sht.Cells(sheetLine, 22) + sht.Cells(sheetLine, 23)   '55岁及以上
+    ps11(16) = 0                                                     '返聘退休人员
+End Function
+Sub ps11Main()
+    Dim ps11(16) As Integer
+    Dim ps11Tmp(16) As Integer
+
+    Call InitPsArray(ps11)            '管理人才总计
+    Call fillPs11Array(6, 12, ps11)
+    Call fillExcel(29, 11, 4, ps11)
+
+    Call InitPsArray(ps11)              '专技人员总计'
+    Call fillPs11Array(6, 26, ps11)
+    Call fillExcel(29, 12, 4, ps11)
+
+    Call InitPsArray(ps11)              '双肩挑
+    Call fillPs11Array(6, 27, ps11)
+    Call fillExcel(29, 13, 4, ps11)
+
+    '    call InitPsArray(ps11)              '具有执业资格 从数据中无从得知
+    '    call fillPs11Array(6,27,ps11)
+    '    call fillExcel(29,13,4,ps11)
+
+    Call InitPsArray(ps11)              '专业技术女性
+    Call fillPs11Array(6, 29, ps11)
+    Call fillExcel(29, 15, 4, ps11)
+
+    Call InitPsArray(ps11)              '少数民族
+    Call fillPs11Array(6, 30, ps11)
+    Call fillExcel(29, 16, 4, ps11)
+    '-------------------------数组求和---------------------------------------------
+    '    -----------------------------------------------
+    Call InitPsArray(ps11)           '正高1-2-3
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(6, 31, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(6, 32, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 11, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillExcel(29, 21, 4, ps11)
+    '    -------------------------------------副高4567
+    Call InitPsArray(ps11)           '
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 12, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 13, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 14, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 15, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillExcel(29, 22, 4, ps11)
+    '    --------------------------------'中级8-9-10
+    Call InitPsArray(ps11)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 16, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 17, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 18, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillExcel(29, 23, 4, ps11)
+    '    -------------------------------------初级11-12-13
+    Call InitPsArray(ps11)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 19, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 20, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillPs11Array(7, 21, ps11Tmp)
+    Call SumArray(ps11, ps11Tmp)
+    Call InitPsArray(ps11Tmp)
+
+    Call fillExcel(29, 24, 4, ps11)
+    '    ------------------------------------------'其他专技
+    Call InitPsArray(ps11)
+    Call fillPs11Array(7, 22, ps11)
+    Call fillExcel(29, 25, 4, ps11)
+    '----------------------------------------------------------------------
+    Call InitPsArray(ps11)              '其他专技
+    Call fillPs11Array(7, 23, ps11)
+    Call fillExcel(29, 27, 4, ps11)
+
+    Call InitPsArray(ps11)              '工勤技能人员总计
+    Call fillPs11Array(7, 23, ps11)
+    Call fillExcel(29, 27, 4, ps11)
+
+
+    Call InitPsArray(ps11)              '高级技师
+    Call fillPs11Array(7, 26, ps11)
+    Call fillExcel(29, 28, 4, ps11)
+
+
+    Call InitPsArray(ps11)              '技师
+    Call fillPs11Array(7, 27, ps11)
+    Call fillExcel(29, 30, 4, ps11)
+
+
+    Call InitPsArray(ps11)              '高级工
+    Call fillPs11Array(7, 28, ps11)
+    Call fillExcel(29, 32, 4, ps11)
+
+
+    Call InitPsArray(ps11)              '中级工
+    Call fillPs11Array(7, 29, ps11)
+    Call fillExcel(29, 34, 4, ps11)
+
+
+    Call InitPsArray(ps11)              '初级工
+    Call fillPs11Array(7, 30, ps11)
+    Call fillExcel(29, 36, 4, ps11)
+End Sub
+
+Function FillPs10Array(sheetRowIndex As Integer, ps() As Integer)
+    If Sheet2.Cells(sheetRowIndex, 25) <> "" Then  '先保证有培训次数不为空再计算
+        If Sheet2.Cells(sheetRowIndex, 12) <> "" Then '统计管理类别培训情况
+            ps(0) = ps(0) + 1
+            If Sheet2.Cells(sheetRowIndex, 30) = "是" Then '是否出国
+                ps(1) = ps(1) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "12*" Then '
+                ps(2) = ps(2) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "13*" Then '
+                ps(3) = ps(3) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "1个月*" Then '
+                ps(4) = ps(4) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "3个月*" Then '
+                ps(5) = ps(5) + 1
+            End If
+            ps(6) = ps(0) '参加培训总人次 和参加培训人员合计 不是同一回事吗？设计表格的人是不是脑子坏了
+            ps(7) = 0
+            ps(8) = 0
+            ps(9) = 0
+
+            If Sheet2.Cells(sheetRowIndex, 26) = "党校" Then '培训机构
+                ps(10) = ps(10) + 1
+            End If
+            If Sheet2.Cells(sheetRowIndex, 26) = "行政学院" Then '培训机构
+                ps(11) = ps(11) + 1
+            End If
+            If Sheet2.Cells(sheetRowIndex, 26) Like "其他*" Then '培训机构
+                ps(12) = ps(12) + 1
+            End If
+        End If
+
+        If Sheet2.Cells(sheetRowIndex, 13) <> "" Then '统计专技类培训情况
+            ps(13) = ps(13) + 1
+            If Sheet2.Cells(sheetRowIndex, 30) = "是" Then '是否出国
+                ps(14) = ps(14) + 1
+            End If
+            If Sheet2.Cells(sheetRowIndex, 26) Like "12*" Then '
+                ps(15) = ps(15) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "13*" Then '
+                ps(16) = ps(16) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "1个月*" Then '
+                ps(17) = ps(17) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "3个月*" Then '
+                ps(18) = ps(18) + 1
+            End If
+            ps(19) = ps(13) '参加培训总人次 和参加培训人员合计 不是同一回事吗？设计表格的人是不是脑子坏了
+            ps(20) = 0 '培训类型为 培训
+            ps(21) = 0 '培训类型为 学历学位教育
+            ps(22) = 0 '培训渠道为 高校、科研机构
+            If Sheet2.Cells(sheetRowIndex, 26) Like "其他*" Then '
+                ps(23) = ps(23) + 1
+            End If
+
+        End If
+
+        If Sheet2.Cells(sheetRowIndex, 16) <> "" Then '统计工勤类别培训情况
+            ps(24) = ps(24) + 1
+            If Sheet2.Cells(sheetRowIndex, 30) = "是" Then '是否出国
+                ps(25) = ps(25) + 1
+            End If
+            If Sheet2.Cells(sheetRowIndex, 26) Like "12*" Then '
+                ps(26) = ps(26) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "13*" Then '
+                ps(27) = ps(27) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "1个月*" Then '
+                ps(28) = ps(28) + 1
+            End If
+
+            If Sheet2.Cells(sheetRowIndex, 26) Like "3个月*" Then '
+                ps(29) = ps(29) + 1
+            End If
+            ps(30) = ps(24)
+        End If
+    End If
+End Function
+
+Sub ps10Main()
+    Dim ps10(30) As Integer
+    Dim sheet2_row As Integer
+    sheet2_row = 3
+
+    Call InitPsArray(ps10)
+    While Sheet2.Cells(sheet2_row, 2) <> ""
+        Call FillPs10Array(sheet2_row, ps10)
+        sheet2_row = sheet2_row + 1
+    Wend
+    Call fillExcel(27, 12, 3, ps10)
+
+    If CityLevel = "3市州级单位" Then
+        Call fillExcel(27, 15, 3, ps10)
+    ElseIf CityLevel = "4县级单位" Then
+        Call fillExcel(27, 16, 3, ps10)
+    Else
+        Call fillExcel(27, 17, 3, ps10)
+    End If
+
+End Sub
+
+'"--------------------为防止bug特别设置几个函数
+Sub ClearPsContents()
+    '    Sheet1.Range("a11:").ClearContents    '单位情况表
+    '    Sheet2.Range("d11:").ClearContents      '人员情况表
+    '    Sheet3.Range(":").ClearContents      '填写要求
+    Sheet4.Range("a11:u11").ClearContents      'ps0
+    Sheet5.Range("d11:ac36").ClearContents      '01
+    Sheet6.Range("E11:AK32").ClearContents      '02
+    Sheet7.Range("E11:AK33").ClearContents      '2.1
+    Sheet8.Range("d13:u23").ClearContents      '03
+    Sheet9.Range("d13:k30").ClearContents      '04
+    Sheet10.Range("c12:R16").ClearContents  'ps05
+    '    Sheet11.Range(":").ClearContents  'ps06
+    Sheet12.Range("c13:ae31").ClearContents  'ps07
+    Sheet13.Range("c13:ae30").ClearContents  'ps71
+    Sheet14.Range("c13:ab31").ClearContents  'ps72
+    Sheet15.Range("c13:ab30").ClearContents  'ps73
+    Sheet16.Range("D12:w32").ClearContents  'ps74
+    Sheet17.Range("D12:w32").ClearContents  'ps75
+    Sheet18.Range("D13:v30").ClearContents  'ps76
+    Sheet19.Range("D13:AB30").ClearContents  'ps77
+    Sheet20.Range("d13:ac45").ClearContents  'ps08
+    Sheet21.Range("d13:aF45").ClearContents  'ps81
+    Sheet22.Range("d13:ac45").ClearContents  'ps82
+    Sheet23.Range("d13:aF45").ClearContents  'ps83
+    Sheet24.Range("d13:ac43").ClearContents  'ps84
+    Sheet25.Range("d13:af43").ClearContents  '85
+    '    Sheet26.Range("").ClearContents  '09
+    Sheet27.Range("c12:ag17").ClearContents  '10
+    '    Sheet28.Range("").ClearContents  '11
+    Sheet29.Range("d11:t38").ClearContents  '11.1
+End Sub
+
+Sub DeleteSh2BlankRow()
+    Dim i As Integer
+    Dim x As Integer
+    x = 3
+    i = Sheet2.Range("a65536").End(xlUp).Row
+    While x <= i
+        If Sheet2.Cells(x, 2) = "" Then
+            Sheet2.Rows(x).Delete
+            i = Sheet2.Range("a65536").End(xlUp).Row
+        Else
+            x = x + 1
+        End If
+    Wend
+End Sub
+
+Sub FormartDanwei()
+    If Sheet1.Cells(3, 1) = "" Then
+        Dim i As Integer
+        Dim line As String
+        i = Sheet1.Range("a65536").End(xlUp).Row
+        If i <> 2 Then
+            line = CStr(i) & ":" & CStr(i)
+            Sheet1.Rows(line).Select
+            Selection.Copy
+            Sheet1.Rows("3:3").Select
+            ActiveSheet.Paste
+        End If
+    End If
+End Sub
 
 Sub Mian()
-system = Sheet1.Cells(3, 1)
-industry = Sheet1.Cells(3, 6)
-CityLevel = Sheet1.Cells(3, 5)
-ps0Main
-ps01Main
-ps02Main
-ps03Main
-ps04Main
-ps05Main
-ps074Main
-ps07456Main
-ps08Main
-'ps09特殊人才不能求出
-MsgBox "已成功生成"
+    FormartDanwei
+    DeleteSh2BlankRow
+    ClearPsContents
+    system = Sheet1.Cells(3, 1)
+    industry = Sheet1.Cells(3, 6)
+    CityLevel = Sheet1.Cells(3, 5)
+    If system = "" Then
+        MsgBox "请填完单位情况表以及人员情况表后再点击生成按钮"
+        Exit Sub
+    End If
+
+    ps0Main
+    ps01Main
+    ps02Main
+    ps03Main
+    ps04Main
+    ps05Main
+    ps074Main
+    ps07456Main
+    ps08Main
+    ps10Main
+    ps11Main
+    MsgBox "已成功生成"
 End Sub
