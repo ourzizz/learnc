@@ -30,9 +30,7 @@ int read_column_numbers(int columns[],int max) //读取列标号，如果超出�
     int num = 0;
     int ch;
     printf("%s\n", "请输入数字");
-    while(num<max && 
-            scanf("%d",&columns[num])==1 && 
-            columns[num]>=0 ){
+    while(num<max && scanf("%d",&columns[num])==1 && columns[num]>=0 ){
         num++;
     }
     if (num %2 != 0) {
