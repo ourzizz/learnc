@@ -1,0 +1,76 @@
+cscope 15 $HOME/learnc/test/testcscope -q 0000000010 0000000296
+	@a.h
+
+1 
+	~"a.h
+"
+
+2 
+	snode
+
+
+6 
+	tfunùiÚ_Çme
+()
+
+9 
+	}
+}
+
+	@b.c
+
+1 
+	sa
+
+
+3 *
+	mÇme
+;
+
+4 
+	mage
+;
+
+6 
+	$ch’hai
+()
+
+9 
+	}
+}
+
+	@main.c
+
+1 
+	~"a.h
+"
+
+2 
+	$maš
+(
+¬gc
+, *
+¬gv
+[])
+
+4 
+a
+;
+
+5 
+	`funùiÚ_Çme
+();
+
+7 
+	}
+}
+
+	@
+1
+.
+0
+3
+15
+a.h
+b.c
+main.c

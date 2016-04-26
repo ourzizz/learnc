@@ -108,7 +108,7 @@ Status InsBefore(LinkList *L,Link *p,Link s){
     if ((*p) == NULL | s==NULL) {
         return FALSE;
     }
-    Link tmp = NULL;
+    Link tmp = L->head;
     while(tmp->next != *p) {
         tmp = tmp->next;
     }
@@ -264,6 +264,9 @@ void ViewList(LinkList L)
         printf("%d\n",p->data);
         p = p->next;
     }
+}
+int MergeList_L(LinkList &La,LinkList &Lb,LinkList &Lc)
+{/*已知单链线性表La和Lb的元素按值非递减排列，归并La Lb得到Lc，Lc的值也非递减排列*/
 }
 int main()
 {

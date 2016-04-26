@@ -11,18 +11,9 @@ int add_number(int n)
 }
 int main(void)
 {
-    int k = add_number(100);
-    k+=add_number(100);
-    printf("%d\n", k);
-    return 0;
-    /*int i,j;*/
-    /*i=1;*/
-    /*j=10;*/
-    /*do {*/
-        /*if (i++>--j) {*/
-            /*continue;*/
-        /*}*/
-    /*} while (i<5);*/
-    /*printf("%d,%d\n",i,j);*/
-    /*return 0;*/
+    int i;
+    for (i = 0; i < 5;
+            ++i) {
+        printf("%d\n", i);
+    }
 }
