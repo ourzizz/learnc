@@ -15,11 +15,12 @@ int sort(int a[],int size)
         }
         i = last;
     }
+    return 0;
 }
+
 int main()
 {
     int a[10]={1,8,4,6,5,9,0,10,11,7};
-    char chenhai={ 'c', 'h', 'e', 'n', 'h', 'h', }
     sort(a,sizeof(a)/sizeof(int));
     /*printf("%d\n", sizeof(a)/sizeof(int));*/
     int i;
