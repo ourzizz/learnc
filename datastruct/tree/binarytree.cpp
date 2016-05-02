@@ -1,3 +1,4 @@
+#include <stack>
 #include <iostream>
 #include <stdio.h>
 #include <malloc.h>
@@ -7,6 +8,7 @@ typedef struct BiTNode{
     ElemenType element;
     struct BiTNode * Lchild,*Rchild;
 }BiTNode,* BiTree;
+typedef BiTNode SElemType;
 
 void InitNode(BiTree T)
 {
@@ -48,18 +50,34 @@ int PreOrderTraverse(BiTree T,int (* Vist)(ElemenType e )) {
 
 int PreOrderTraverse_nonrecurs(BiTree T,int (* Vist)(ElemenType e ))
 {
-
+    stack<BiTree> s;
+    BiTree p = NULL;
+    s.push(T);
+    while(!s.empty()) {
+        while((p=s.top()) && p) 
+            s.push(p->Lchild);
+        s.pop();
+        if (!s.empty()) 
+        {
+            p=s.top();
+            s.pop();
+            Vist(p->element);
+            s.push(p->Rchild);
+        }//endif
+    }//endwhile
+    return 1;
 }
 int InOrderTraverse(BiTree T,int (* Vist)(ElemenType e ));
 int PostOrderTraverse(BiTree T,int (* Vist)(ElemenType e ));
 int LevelOrderTraverse(BiTree T,int (* Vist)(ElemenType e ));
-int main(void)
+int main()
 {
     printf("Create Binarytree by preoder input\n");
     printf("Enter '#' to finish input ,every time just one number can be inputed\n");
     printf("Get Start\n");
     BiTree T=NULL;
     CreateBiTree(&T);
-    PreOrderTraverse(T,Vist);
+    PreOrderTraverse_nonrecurs(T,Vist);
+    //PreOrderTraverse(T,Vist);
     return 0;
 }
