@@ -67,6 +67,7 @@ int PreOrderTraverse_nonrecurs(BiTree T,int (* Vist)(ElemenType e ))
     }//endwhile
     return 1;
 }
+
 int InOrderTraverse(BiTree T,int (* Vist)(ElemenType e ));
 int PostOrderTraverse(BiTree T,int (* Vist)(ElemenType e ));
 int LevelOrderTraverse(BiTree T,int (* Vist)(ElemenType e ));
