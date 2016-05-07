@@ -29,6 +29,7 @@ int CreateBiTree(BiThrTree *T)
     }
     return 1;
 }
+
 int InOrderTraverse_Thr(BiThrTree T,int (* Vist )(ElemenType e))
 {
     BiThrTree p = T->lchild;
@@ -45,20 +46,28 @@ int InOrderTraverse_Thr(BiThrTree T,int (* Vist )(ElemenType e))
     }
     return 1;
 }
-void InThreading(BiThrTree p,BiThrTree pre) 
+
+void InThreading(BiThrTree p,BiThrTree *pre) 
 {
     if (p!=NULL) {
         InThreading(p->lchild,pre);
-        if (!p->lchild) { p->LTag = Thread; p->lchild=pre; }
-        if(! pre->rchild){pre->RTag=Thread;pre->rchild = p; }
-        pre = p;
+        if (!p->lchild) { 
+            p->LTag = Thread;
+            p->lchild=*pre; 
+        }
+        if(! ( *pre )->rchild){
+            ( *pre )->RTag=Thread;
+            ( *pre )->rchild = p; 
+        }
+        *pre = p;
         InThreading(p->rchild,pre);
     }
 }
-int InOrderThreading(BiThrTree &Thrt,BiThrTree T)
+
+BiThrTree InOrderThreading(BiThrTree &Thrt,BiThrTree T)
 {
-    BiThrTree pre;
-    if (!( Thrt = (BiThrTree)malloc(sizeof(BiThrNode)) ))  return 0;
+    BiThrTree pre=NULL;
+    if (!(Thrt = (BiThrTree)malloc(sizeof(BiThrNode))))  return 0;
     Thrt->LTag = Link; Thrt->RTag = Thread;
     Thrt->rchild = Thrt;
     if (!T) {
@@ -67,13 +76,14 @@ int InOrderThreading(BiThrTree &Thrt,BiThrTree T)
     else{
         Thrt->lchild=T;
         pre = Thrt;
-        InThreading(T,pre);
+        InThreading(T,&pre);
         pre->rchild=Thrt;
         pre->RTag=Thread;
         Thrt->rchild=pre;
     }
-    return 1;
+    return Thrt;
 }
+
 int Vist(ElemenType e)
 {
     std::cout << e;
@@ -89,7 +99,7 @@ int main()
     BiThrTree T=NULL;
     BiThrTree Temp=NULL;
     CreateBiTree(&T);
-    InOrderThreading(Temp,T);
+    T = InOrderThreading(Temp,T);
     InOrderTraverse_Thr(T,Vist);
     //PreOrderTraverse(T,Vist);
     return 0;
