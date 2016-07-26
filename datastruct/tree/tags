@@ -1,0 +1,16 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BiTNode	binarytree.c	/^typedef struct BiTNode{$/;"	s	file:
+BiTNode	binarytree.c	/^}BiTNode,* BiTree;$/;"	t	typeref:struct:BiTNode	file:
+BiTree	binarytree.c	/^}BiTNode,* BiTree;$/;"	t	typeref:struct:BiTNode	file:
+CreateBiTree	binarytree.c	/^int CreateBiTree(BiTree T)$/;"	f
+ElemenType	binarytree.c	/^typedef char ElemenType;$/;"	t	file:
+InitNode	binarytree.c	/^void InitNode(BiTree T)$/;"	f
+Lchild	binarytree.c	/^    struct BiTNode * Lchild,*Rchild;$/;"	m	struct:BiTNode	typeref:struct:BiTNode::BiTNode	file:
+Rchild	binarytree.c	/^    struct BiTNode * Lchild,*Rchild;$/;"	m	struct:BiTNode	typeref:struct:BiTNode::	file:
+element	binarytree.c	/^    ElemenType element;$/;"	m	struct:BiTNode	file:
+main	binarytree.c	/^int main(void)$/;"	f

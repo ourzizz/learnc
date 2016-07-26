@@ -2,4 +2,5 @@
 #include "b.h"
 void function_two()
 {
+
 }

@@ -9,5 +9,6 @@ int main(void)
     function_three();
     printf("chenhai\n");
     printf("hello world\n");
-    exit(EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);;
+    printf("chenhai\n");
 }
