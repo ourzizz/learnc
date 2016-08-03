@@ -1,0 +1,91 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ALGraph	AdjList.h	/^}ALGraph;$/;"	t	typeref:struct:__anon1
+AdjList	AdjList.h	/^}VNode,AdjList[MAX_VERTEX_NUM];$/;"	t	typeref:struct:VNode
+ArcNode	AdjList.h	/^typedef struct ArcNode{$/;"	s
+ArcNode	AdjList.h	/^}ArcNode;$/;"	t	typeref:struct:ArcNode
+BFS	travergraph.cpp	/^void BFS(LGraph G)$/;"	f
+Close	MST.cpp	/^}Close;$/;"	t	typeref:struct:close	file:
+Closedge	MST.cpp	/^Close Closedge[10];$/;"	v
+Closedge	MinispanTree.cpp	/^typedef struct Closedge{  $/;"	s	file:
+CreateUDG	MST.cpp	/^void CreateUDG(MGraph *G)$/;"	f
+CreateUDG	MinispanTree.cpp	/^void CreateUDG(MGraph &G)\/\/构造无向图  $/;"	f
+DFS	travergraph.cpp	/^static void DFS(LGraph G, int i, int *visited)$/;"	f	file:
+DFSArticul	FindArticul.cpp	/^void DFSArticul(ALGraph G,int v0)$/;"	f
+DFSTraverse	travergraph.cpp	/^void DFSTraverse(LGraph G)$/;"	f
+ENode	travergraph.cpp	/^}ENode, *PENode;$/;"	t	typeref:struct:_ENode	file:
+FindArticul	FindArticul.cpp	/^void FindArticul(ALGraph G)$/;"	f
+LENGTH	FindArticul.cpp	5;"	d	file:
+LENGTH	travergraph.cpp	15;"	d	file:
+LGraph	travergraph.cpp	/^}LGraph;$/;"	t	typeref:struct:_LGraph	file:
+LocateVex	MST.cpp	/^int LocateVex(MGraph G,string u)$/;"	f
+LocateVex	MinispanTree.cpp	/^int LocateVex(MGraph G, string u)\/\/返回顶点u在图中的位置  $/;"	f
+MAX	FindArticul.cpp	3;"	d	file:
+MAX	travergraph.cpp	13;"	d	file:
+MAXW	MST.cpp	3;"	d	file:
+MAX_VERTEX_NUM	AdjList.h	1;"	d
+MGraph	MST.cpp	/^typedef struct MGraph{$/;"	s	file:
+MGraph	MST.cpp	/^}MGraph;$/;"	t	typeref:struct:MGraph	file:
+MGraph	MinispanTree.cpp	/^typedef struct MGraph{  $/;"	s	file:
+MGraph	MinispanTree.cpp	/^}MGraph;  $/;"	t	typeref:struct:MGraph	file:
+MiniSpanTree_PRIM	MST.cpp	/^void MiniSpanTree_PRIM(MGraph G,string u)$/;"	f
+MiniSpanTree_PRIM	MinispanTree.cpp	/^void MiniSpanTree_PRIM(MGraph G, string u)\/\/普里姆算法  $/;"	f
+PENode	travergraph.cpp	/^}ENode, *PENode;$/;"	t	typeref:struct:_ENode	file:
+VNode	AdjList.h	/^typedef struct VNode{$/;"	s
+VNode	AdjList.h	/^}VNode,AdjList[MAX_VERTEX_NUM];$/;"	t	typeref:struct:VNode
+VNode	travergraph.cpp	/^}VNode;$/;"	t	typeref:struct:_VNode	file:
+_ENode	travergraph.cpp	/^typedef struct _ENode$/;"	s	file:
+_LGraph	travergraph.cpp	/^typedef struct _LGraph$/;"	s	file:
+_VNode	travergraph.cpp	/^typedef struct _VNode$/;"	s	file:
+adjvex	AdjList.h	/^    int adjvex;$/;"	m	struct:ArcNode
+adjvex	MST.cpp	/^    string adjvex;$/;"	m	struct:close	file:
+adjvex	MinispanTree.cpp	/^    string adjvex;  $/;"	m	struct:Closedge	file:
+arcnum	AdjList.h	/^    int vexnum,arcnum;$/;"	m	struct:__anon1
+arcnum	MST.cpp	/^    int vexnum,arcnum;$/;"	m	struct:MGraph	file:
+arcnum	MinispanTree.cpp	/^    int vexnum, arcnum;  $/;"	m	struct:MGraph	file:
+arcs	MST.cpp	/^    int arcs[10][10];$/;"	m	struct:MGraph	file:
+arcs	MinispanTree.cpp	/^    int arcs[10][10];\/\/邻接矩阵  $/;"	m	struct:MGraph	file:
+close	MST.cpp	/^typedef struct close$/;"	s	file:
+count	FindArticul.cpp	/^int count = 0;$/;"	v
+create_example_lgraph	FindArticul.cpp	/^ALGraph* create_example_lgraph()$/;"	f
+create_example_lgraph	travergraph.cpp	/^LGraph* create_example_lgraph()$/;"	f
+create_lgraph	travergraph.cpp	/^LGraph* create_lgraph()$/;"	f
+data	AdjList.h	/^    char data;$/;"	m	struct:VNode
+data	travergraph.cpp	/^    char data;              \/\/ 顶点信息$/;"	m	struct:_VNode	file:
+edgnum	travergraph.cpp	/^    int edgnum;             \/\/ 图的边的数目$/;"	m	struct:_LGraph	file:
+first_edge	travergraph.cpp	/^    ENode *first_edge;      \/\/ 指向第一条依附该顶点的弧$/;"	m	struct:_VNode	file:
+firstarc	AdjList.h	/^    ArcNode * firstarc;$/;"	m	struct:VNode
+get_position	travergraph.cpp	/^static int get_position(LGraph g, char ch)$/;"	f	file:
+info	AdjList.h	/^    char *info;$/;"	m	struct:ArcNode
+isLetter	FindArticul.cpp	4;"	d	file:
+isLetter	travergraph.cpp	14;"	d	file:
+ivex	travergraph.cpp	/^    int ivex;                   \/\/ 该边所指向的顶点的位置$/;"	m	struct:_ENode	file:
+kind	AdjList.h	/^    int kind;\/\/图的种类标识，没啥用$/;"	m	struct:__anon1
+link_last	travergraph.cpp	/^static void link_last(ENode *list, ENode *node)$/;"	f	file:
+low	FindArticul.cpp	/^int low[13];$/;"	v
+lowcost	MST.cpp	/^    int lowcost;$/;"	m	struct:close	file:
+lowcost	MinispanTree.cpp	/^    int lowcost;  $/;"	m	struct:Closedge	file:
+main	FindArticul.cpp	/^int main(void)$/;"	f
+main	MST.cpp	/^int main()$/;"	f
+main	MinispanTree.cpp	/^int main()  $/;"	f
+main	travergraph.cpp	/^int  main()$/;"	f
+minimum	MinispanTree.cpp	/^int minimum(minside sz, MGraph G)\/\/求sz中lowcost的最小值，返回序号  $/;"	f
+minimun	MST.cpp	/^int minimun(Close Closedge[],int len)$/;"	f
+minside	MinispanTree.cpp	/^}minside[10];  $/;"	t	typeref:struct:Closedge	file:
+next_edge	travergraph.cpp	/^    struct _ENode *next_edge;   \/\/ 指向下一条弧的指针$/;"	m	struct:_ENode	typeref:struct:_ENode::_ENode	file:
+nextarc	AdjList.h	/^    struct ArcNode * nextarc;$/;"	m	struct:ArcNode	typeref:struct:ArcNode::ArcNode
+print_lgraph	travergraph.cpp	/^void print_lgraph(LGraph G)$/;"	f
+read_char	travergraph.cpp	/^static char read_char()$/;"	f	file:
+vertices	AdjList.h	/^    AdjList vertices;$/;"	m	struct:__anon1
+vexnum	AdjList.h	/^    int vexnum,arcnum;$/;"	m	struct:__anon1
+vexnum	MST.cpp	/^    int vexnum,arcnum;$/;"	m	struct:MGraph	file:
+vexnum	MinispanTree.cpp	/^    int vexnum, arcnum;  $/;"	m	struct:MGraph	file:
+vexnum	travergraph.cpp	/^    int vexnum;             \/\/ 图的顶点的数目$/;"	m	struct:_LGraph	file:
+vexs	MST.cpp	/^    string vexs[10];$/;"	m	struct:MGraph	file:
+vexs	MinispanTree.cpp	/^    string vexs[10];\/\/顶点信息  $/;"	m	struct:MGraph	file:
+vexs	travergraph.cpp	/^    VNode vexs[MAX];$/;"	m	struct:_LGraph	file:
+visited	FindArticul.cpp	/^int visited[13];$/;"	v
