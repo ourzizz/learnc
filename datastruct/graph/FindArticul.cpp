@@ -1,7 +1,13 @@
+/*************************************************************
+求图中的割点，去掉某个节点后，图就被分为多个连通分量
+这个节点就是关节点
+本程序使用的图为严蔚敏版本的图7.19
+使用create_example_lgraph算法直接生成案例的邻接表
+具体算法描述可参考ONENOTE笔记
+ *************************************************************/
 #include <iostream>
 #include <string.h>
 #include <malloc.h>
-
 #define MAX 100
 #define isLetter(a)  ((((a)>='a')&&((a)<='z')) || (((a)>='A')&&((a)<='Z')))
 #define LENGTH(a)  (sizeof(a)/sizeof(a[0]))
@@ -43,15 +49,25 @@ void link_last(ArcNode * arc,ArcNode* node)
 ALGraph* create_example_lgraph()
 {
     char c1, c2;
-    char vexs[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
+    char vexs[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'};
     char edges[][2] = {
-        {'A', 'C'}, 
-        {'A', 'D'}, 
+        {'A', 'L'}, 
         {'A', 'F'}, 
+        {'A', 'C'}, 
+        {'A', 'B'}, 
         {'B', 'C'}, 
-        {'C', 'D'}, 
-        {'E', 'G'}, 
-        {'F', 'G'}}; 
+        {'B', 'D'}, 
+        {'D', 'E'},
+        {'B', 'G'},
+        {'B', 'H'},
+        {'B', 'M'},
+        {'G', 'H'},
+        {'G', 'K'},
+        {'G', 'I'},
+        {'L', 'J'},
+        {'L', 'M'},
+        {'J', 'M'}
+    }; 
     int vlen = LENGTH(vexs);
     int elen = LENGTH(edges);
     int i, p1, p2;
@@ -86,6 +102,7 @@ ALGraph* create_example_lgraph()
         // 初始化node1
         node1 = (ArcNode*)malloc(sizeof(ArcNode));
         node1->adjvex = p2;
+        node1->nextarc = NULL;
         // 将node1链接到"p1所在链表的末尾"
         if(pG->vertices[p1].firstarc == NULL)
             pG->vertices[p1].firstarc = node1;
@@ -94,6 +111,7 @@ ALGraph* create_example_lgraph()
         // 初始化node2
         node2 = (ArcNode*)malloc(sizeof(ArcNode));
         node2->adjvex = p1;
+        node2->nextarc = NULL;
         // 将node2链接到"p2所在链表的末尾"
         if( pG->vertices[p2].firstarc == NULL )
             pG->vertices[p2].firstarc = node2;
@@ -113,7 +131,7 @@ void DFSArticul(ALGraph G,int v0)
             DFSArticul(G,w);//没有访问过就对其进行递归
             if (low[w]< min) min= low[w]; //递归将会对w结点的最浅访问层次进行求解，并将结果写入全局数组low中，如果low[w]最浅层次比min(当前栈节点的访问层次要浅)小就更新min
             if (low[w]>= visited[v0]) //low[w]大于等于v0的访问层次，说明w一下节点就算有回边也最多回到v0一层，即无法回到v0的祖先节点,那么v0必为割点
-                std::cout << v0<<G.vertices[v0].data<<"关节点"<< std::endl;
+                std::cout << visited[v0]<<G.vertices[v0].data<<"关节点"<< std::endl;
         }
         else if(visited[w] < min) //如果w结点已经访问过了，说明w在v0之前就被访问过，是v0的祖先节点，这是一条回边
             min = visited[w]; //更新min
@@ -126,13 +144,13 @@ void FindArticul(ALGraph G)
     for (int i = 1; i < G.vexnum; ++i) {
        visited[i]  = 0;
     }
-    ArcNode *p = G.vertices[0].firstarc;
+    ArcNode *p = G.vertices[0].firstarc; //从第一个节点的第一个邻接边开始计算,相当于根节点的第一个孩子
     int v=p->adjvex;
     DFSArticul(G,v);
-    if (count < G.vexnum) {
+    if (count < G.vexnum) { //对根节点的第一个孩子进行了遍历计算，此时如果count<G.vexnum表示根还有其他孩子没有遍历
         std::cout << 0<<G.vertices[0].data<<"关节点"<< std::endl;
-        while(p->nextarc) {
-            p = p->nextarc ;
+        while(p->nextarc) { //相当于遍历root的第二个孩子
+            p = p->nextarc ; //下面内容和DFSArticul几乎已知
             v = p->adjvex;
             if (visited[v] == 0) {
                 DFSArticul(G,v);
