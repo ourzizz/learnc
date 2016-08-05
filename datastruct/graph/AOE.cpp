@@ -1,7 +1,14 @@
+/*
+ * 求解关键路径，图的构造与以往一致，严蔚敏书本版本手工填入自动生成，方便调试
+ * 正向拓扑排序求出每个节点的最早开始是时间，其拓扑排序记录入辅助栈中，然后再
+ * 从栈中输出每个节点就形成了逆向拓扑，此时再逐次求得每个节点的最晚开始时间
+ * 最早开始时间等于最晚开始时间的节点即为关键路径上的节点。关键路径并不唯一
+ */
 #include <iostream>
 #include <string.h>
 #include <malloc.h>
 #include <stack>
+#include <stdio.h>
 #define MAX 100
 #define isLetter(a)  ((((a)>='a')&&((a)<='z')) || (((a)>='A')&&((a)<='Z')))
 #define LENGTH(a)  (sizeof(a)/sizeof(a[0]))
@@ -10,6 +17,7 @@
 using namespace std;
 typedef struct ArcNode{
     int adjvex;
+    int weight;
     struct ArcNode * nextarc;
     char *info;
 }ArcNode;
@@ -24,6 +32,9 @@ typedef struct{
 }ALGraph;
 
 int indegree[10];
+int earlytime[10];
+int lasttime[10];
+std::stack<int> R;
 int get_position(ALGraph G, char c)
 {
     for (int i = 0; i < G.vexnum; ++i) {
@@ -40,22 +51,26 @@ void link_last(ArcNode * arc,ArcNode* node)
 }
 ALGraph* create_example_lgraph()
 {
-    char c1, c2;
-    char vexs[] = {'A', 'B', 'C', 'D', 'E', 'F'};
-    char edges[][2] = {
-        {'A','B'}, 
-        {'A','C'},
-        {'A','D'},
-        {'E','C'},
-        {'E','F'},
-        {'C','F'},
-        {'D','B'},
-        {'D','F'},
+    char c1, c2,c3;
+    char vexs[] = {'A', 'B', 'C', 'D', 'E', 'F','G','H','I'};
+    char edges[][3] = {
+        {'A','B','6'}, 
+        {'A','C','4'},
+        {'A','D','5'},
+        {'B','E','1'},
+        {'C','E','1'},
+        {'D','F','2'},
+        {'E','G','9'},
+        {'E','H','7'},
+        {'F','H','4'},
+        {'G','I','2'},
+        {'H','I','4'},
+
     }; 
     int vlen = LENGTH(vexs);
     int elen = LENGTH(edges);
     int i, p1, p2;
-    ArcNode *node1, *node2;
+    ArcNode *node1;
     ALGraph* pG;
 
 
@@ -79,6 +94,7 @@ ALGraph* create_example_lgraph()
         // 读取边的起始顶点和结束顶点
         c1 = edges[i][0];
         c2 = edges[i][1];
+        c3 = edges[i][2];
 
         p1 = get_position(*pG, c1);
         p2 = get_position(*pG, c2);
@@ -86,21 +102,13 @@ ALGraph* create_example_lgraph()
         // 初始化node1
         node1 = (ArcNode*)malloc(sizeof(ArcNode));
         node1->adjvex = p2;
+        node1->weight = c3-'0';
         node1->nextarc = NULL;
         // 将node1链接到"p1所在链表的末尾"
         if(pG->vertices[p1].firstarc == NULL)
             pG->vertices[p1].firstarc = node1;
         else
             link_last(pG->vertices[p1].firstarc, node1);
-        // 初始化node2
-        //node2 = (ArcNode*)malloc(sizeof(ArcNode));
-        //node2->adjvex = p1;
-        //node2->nextarc = NULL;
-        // 将node2链接到"p2所在链表的末尾"
-        //if( pG->vertices[p2].firstarc == NULL )
-            //pG->vertices[p2].firstarc = node2;
-        //else
-            //link_last( pG->vertices[p2].firstarc, node2 );
     }
     return pG;
 }
@@ -118,7 +126,6 @@ int TopologicalSort(ALGraph G)
     int k=0;
     int count=0;
     int j=0;
-    std::cout << "拓扑排序的结果为" << std::endl;
     FindInDegree(G,indegree);
     std::stack<int> S;
     for (int i = 0; i < G.vexnum; ++i) {
@@ -128,9 +135,13 @@ int TopologicalSort(ALGraph G)
     }
     while(!S.empty()) {
         j=S.top();
-        std::cout << G.vertices[j].data << std::endl; S.pop();count++;
+        R.push(j);
+        std::cout << G.vertices[j].data <<earlytime[j]<< std::endl; S.pop();count++;
         for (ArcNode* p=G.vertices[j].firstarc;p; p=p->nextarc) {
             k=p->adjvex;
+            if (earlytime[k] < p->weight + earlytime[j]) {
+                earlytime[k] = p->weight + earlytime[j];
+            }
             if (!(--indegree[k])) {
                 S.push(k);
             }
@@ -144,10 +155,43 @@ int TopologicalSort(ALGraph G)
     else
         return 1;
 }
+int CriticalPath(ALGraph G)
+{
+    if (!TopologicalSort(G))  return 0;
+    int j=0;
+    for (int i = 0; i < G.vexnum; ++i) {
+       lasttime[i] = earlytime[G.vexnum-1];
+    }
+    while(!R.empty()) {
+        j=R.top(); R.pop();
+        for (ArcNode* p=G.vertices[j].firstarc;p; p=p->nextarc) {
+            if (lasttime[j] >lasttime[p->adjvex]-p->weight) {
+                lasttime[j] =lasttime[p->adjvex]-p->weight;
+            }
+        }
+    }
+    int k=0;
+    int dut=0;
+    int ee=0;
+    int el=0;
+    char tag=' ';
+    std::cout<< "j"<<" "<< "k"<<" " << "dut"<<" " << "ee" <<" "<< "el"<<" "<<"tag"<<" "  << std::endl;
+    for (int j = 0; j < G.vexnum; ++j) {
+        //std::cout << lasttime[i] << std::endl;
+        for (ArcNode* p=G.vertices[j].firstarc;p; p=p->nextarc) {
+            k=p->adjvex;dut=p->weight;
+            ee=earlytime[j];el=lasttime[j];
+            tag = (ee==el)?'*':' ';
+            std::cout<< j<<" "<< k<<" " << dut<<"    " << ee <<"  "<< el<<"   "<<tag<<" "  << std::endl;
+
+        }
+    }
+    return 1;
+}
 
 int main(void)
 {
     ALGraph * G=create_example_lgraph(); 
-    TopologicalSort(*G);
+    CriticalPath(*G);
     return 0;
 }

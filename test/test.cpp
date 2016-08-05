@@ -19,10 +19,15 @@ int main(void)
     s.push(5);
     s.push(6);
     s.push(0);
-    while(!s.empty()){
-        a=s.top();
-        std::cout << a << std::endl;
-        s.pop();
-    }
+    //while(!s.empty()){
+        //a=s.top();
+        //std::cout << a << std::endl;
+        //s.pop();
+    //}
+    char b='2';
+    int c;
+    c=int(b);
+    std::cout << c<< std::endl;
+    std::cout << 2+b-'0'  << std::endl;
     return 0;
 }
