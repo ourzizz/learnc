@@ -34,9 +34,27 @@ int MEMOIZED_CUT_ROD(int *p,int n)
     }
     return MEMOIZED_CUT_ROD_AUX(p,n,r);
 }
+int BOTTOM_UP_ROD(int *p,int n) 
+{//自底向上求解，每个问题所依赖的子问题已经得到解决
+    int i,j,q;
+    int r[n+1];
+    for (i = 0; i < n+1; ++i) {
+        r[i] = 0;
+    }
+    for (j = 1; j < n+1; ++j) {
+        q=-1;
+        for (i = 1; i < j; ++i) {
+            q=(q>p[i]+r[j-i])?q:p[i]+r[j-i];
+        }
+        r[j]=1;
+    }
+    return r[n];
+
+}
 int main(void)
 {
     int p[11] = { 0,1 , 5 , 8 , 9 , 10, 17, 17, 20, 24, 30};
-    std::cout << MEMOIZED_CUT_ROD(p,9)<< std::endl;
+    //std::cout << MEMOIZED_CUT_ROD(p,9)<< std::endl;
+    std::cout << BOTTOM_UP_ROD(p,4)<< std::endl;
     return 0;
 }
