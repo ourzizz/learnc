@@ -1,8 +1,8 @@
 #endcoding=utf-8
-#面试要求，面试人员分为公务员、警察、选调生三种类型，警察不能跨天，每个考场容量maxrs人，职位不能再分割
+#面试要求，面试人员分为公务员、警察、选调生三种类型，选调生排秀山A警察不能跨天，每个考场容量maxrs人，职位不能再分割
 #此脚本功能类似合并尾考场，可多次使用背包算法
 #将每个考场尽最大量填充
-#公务员、警察、选调生分别执行脚本
+#公务员、警察、选调生分别执行脚本,
 #数据库表结构ksinfo:ksxm/zkzh/sfzh/bkdw/bkzw/leixing/minzu
 #            zhiwei:dwmc/zwmc/leixing/rs/kcxh/msdate
 #            mianshishi:kcxh/mssinfo/hksinfo
@@ -26,7 +26,7 @@ class zhiwei(object):
         self.leixing=leixing
         self.rs=rs
 
-def Initzhiwei(leixing,zhiweilist):
+def Initzhiwei3_1(leixing,zhiweilist):#达到3:1的入列
     #这里从数据库读取职位形成列表
     #zhiweilist=[] #清空列表
     zhiweilist.append(zhiwei('null','null','null',0))#插入第一条空数据，物品0不存在
@@ -35,7 +35,20 @@ def Initzhiwei(leixing,zhiweilist):
     cur.execute(query)
     zw=cur.fetchall()
     for item in zw:
-        zhiweilist.append(zhiwei(item[0],item[1],item[2],item[3]))
+        if (item[3]%3)==0: #达到3:1
+            zhiweilist.append(zhiwei(item[0],item[1],item[2],item[3]))
+
+def Initzhiwei_non3_1(zhiweilist):#达到3:1的入列
+    #这里从数据库读取职位形成列表
+    #zhiweilist=[] #清空列表
+    zhiweilist.append(zhiwei('null','null','null',0))#插入第一条空数据，物品0不存在
+    query="SELECT bkdw,bkzw,leixing,count(*) FROM ksinfo  group by bkdw,bkzw;"
+    print query
+    cur.execute(query)
+    zw=cur.fetchall()
+    for item in zw:
+        if (item[3]%3)!=0:#达不到3：1
+            zhiweilist.append(zhiwei(item[0],item[1],item[2],item[3]))
 
 def arrange_kc(kcxh,zhiweilist):
     w=[]
@@ -51,11 +64,11 @@ def arrange_kc(kcxh,zhiweilist):
             break
         print u"------------------------第",kcxh,u"考场-----------------"
         #import pdb; pdb.set_trace()
-        msdate=1
+        msdate=2
         thiskcxh=kcxh
         if kcxh>maxkcxh:
             thiskcxh=kcxh-maxkcxh
-            msdate=2
+            msdate=1
         for item in sol:
             tmp.append(zhiweilist[item])
             query="insert into zhiwei (`dwmc`, `zwmc`, `leixing`, `rs`, `kcxh`,`msdate`) values('%s','%s','%s',%s,%s,%s)" % (zhiweilist[item].dwmc,zhiweilist[item].zwmc,zhiweilist[item].leixing,zhiweilist[item].rs,thiskcxh,msdate)
@@ -98,12 +111,17 @@ def show(c,w,res): #c背包容量，w重量数组，res状态数组
     return sol #sol数组存放了最优解的物品序号
 #---------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    leixinglist=['公务员','警察','选调生']
+    leixinglist=['选调生','警察','公务员']#先排警察选调生再排公务员
     kcxh=1
     cur.execute("truncate table zhiwei")
     conn.commit()
     for leixing in leixinglist:
         zhiweilist=[] #复用数组每次都要记得清空
-        Initzhiwei(leixing,zhiweilist)
+        Initzhiwei3_1(leixing,zhiweilist)
         kcxh=arrange_kc(kcxh,zhiweilist)
+    print "计算非3：1职位"
+    zhiweilist=[]
+    Initzhiwei_non3_1(zhiweilist)
+    kcxh=arrange_kc(kcxh,zhiweilist)
+    conn.commit()
     conn.close()
