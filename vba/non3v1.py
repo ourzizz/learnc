@@ -8,15 +8,13 @@
 #            mianshishi:kcxh/mssinfo/hksinfo
 #zhiwei表中的数据是脚本根据基本考生数据，计算得出考场序号后一一填入数据库中
 #执行脚本后SELECT ksinfo.*,zhiwei.kcxh FROM ksinfo,zhiwei where ksinfo.bkdw=zhiwei.dwmc and ksinfo.bkzw=zhiwei.zwmc order by kcxh;即可得出每个考生的考场分配
-#query="SELECT * FROM zwrstable where leixing='%s' and msrs>=zkrs*3;" % (leixing)
-#query="SELECT * FROM zwrstable where msrs<zkrs*3;"
 import sys      
 reload(sys)    
 sys.setdefaultencoding('utf8')  
 import MySQLdb
 #------------------------------------------------全局变量设置区域--------------------------------------------------------------------
 maxrs=30 #每个考场设置人数
-maxkcxh=39   #考场序号初始1
+maxkcxh=40   #考场序号初始1
 msdate=1
 conn= MySQLdb.connect( host='192.168.1.107', port = 3306, user='root', passwd='123123', db ='mianshi',charset='utf8')
 cur = conn.cursor()
@@ -28,10 +26,12 @@ class zhiwei(object):
         self.leixing=leixing
         self.rs=rs
 
-def Initzhiwei(leixing,zhiweilist,query):#达到3:1的入列
+def Initzhiwei(leixing,zhiweilist):
     #这里从数据库读取职位形成列表
     #zhiweilist=[] #清空列表
     zhiweilist.append(zhiwei('null','null','null',0))#插入第一条空数据，物品0不存在
+    query="SELECT bkdw,bkzw,leixing,count(*) FROM ksinfo where leixing='%s' group by bkdw,bkzw ;" % (leixing)
+    print query
     cur.execute(query)
     zw=cur.fetchall()
     for item in zw:
@@ -51,15 +51,15 @@ def arrange_kc(kcxh,zhiweilist):
             break
         print u"------------------------第",kcxh,u"考场-----------------"
         #import pdb; pdb.set_trace()
-        msdate=1
+        msdate=2
         thiskcxh=kcxh
         if kcxh>maxkcxh:
             thiskcxh=kcxh-maxkcxh
-            msdate=2
+            msdate=1
         for item in sol:
             tmp.append(zhiweilist[item])
             query="insert into zhiwei (`dwmc`, `zwmc`, `leixing`, `rs`, `kcxh`,`msdate`) values('%s','%s','%s',%s,%s,%s)" % (zhiweilist[item].dwmc,zhiweilist[item].zwmc,zhiweilist[item].leixing,zhiweilist[item].rs,thiskcxh,msdate)
-            #cur.execute(query) #是否写入数据库开关
+            cur.execute(query)
             print query
             sum=zhiweilist[item].rs+sum
         print u"共有",sum,u"人"
@@ -98,59 +98,13 @@ def show(c,w,res): #c背包容量，w重量数组，res状态数组
     return sol #sol数组存放了最优解的物品序号
 #---------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    #leixinglist=['选调生','警察','公务员']#先排警察选调生再排公务员
-    #kcxh=1
-    #cur.execute("truncate table zhiwei")
-    #conn.commit()
-    #for leixing in leixinglist:
-        #zhiweilist=[] #复用数组每次都要记得清空
-        #Initzhiwei3_1(leixing,zhiweilist)
-        #kcxh=arrange_kc(kcxh,zhiweilist)
-    #print "计算非3：1职位"
-    #zhiweilist=[]
-    #Initzhiwei_non3_1(zhiweilist)
-    #kcxh=arrange_kc(kcxh,zhiweilist)
-
-#------------------------------3:1----------------------------------
-    #kcxh=1
-    #cur.execute("truncate table zhiwei")
-    #conn.commit()
-
-    #zhiweilist=[] #复用数组每次都要记得清空
-    #Initzhiwei3_1('选调生',zhiweilist)
-    #kcxh=arrange_kc(kcxh,zhiweilist)
-
-    #print "计算非3：1职位"
-    #zhiweilist=[] #复用数组每次都要记得清空
-    #Initzhiwei_non3_1(zhiweilist)
-    #kcxh=arrange_kc(kcxh,zhiweilist)
-
-    #zhiweilist=[] #复用数组每次都要记得清空
-    #Initzhiwei3_1('警察',zhiweilist)
-    #kcxh=arrange_kc(kcxh,zhiweilist)
-
-    ##gwy
-    #zhiweilist=[] #复用数组每次都要记得清空
-    #Initzhiwei3_1('公务员',zhiweilist)
-    #kcxh=arrange_kc(kcxh,zhiweilist)
-    #conn.close()
-
-#------------------------------3:1----------------------------------
-    #leixinglist=['选调生','警察','公务员']#先排警察选调生再排公务员
-    #kcxh=1
-    #cur.execute("truncate table zhiwei")
-    #conn.commit()
-    #for leixing in leixinglist:
-        ##query="SELECT * FROM zwrstable where leixing='%s';" % (leixing)
-        #query="SELECT bkdw,bkzw,leixing,count(*) FROM ksinfo where leixing='%s' group by bkdw,bkzw ;" % (leixing)
-        #zhiweilist=[] #复用数组每次都要记得清空
-        #Initzhiwei(leixing,zhiweilist,query)
-        #kcxh=arrange_kc(kcxh,zhiweilist)
-    #kcxh=arrange_kc(kcxh,zhiweilist)
-
-#------------------------------屁眼痛3:1----------------------------------
-    #query="SELECT * FROM zwrstable where leixing='%s';" % (leixing)
-    query="SELECT bkdw,bkzw,leixing,count(*) FROM ksinfo where leixing='%s' and bkdw regexp '大方'  group by bkdw,bkzw ;" % (leixing)
-    zhiweilist=[] #复用数组每次都要记得清空
-    Initzhiwei(leixing,zhiweilist,query)
-    kcxh=arrange_kc(kcxh,zhiweilist)
+    leixinglist=['选调生','警察','公务员']#先排警察选调生再排公务员
+    kcxh=1
+    cur.execute("truncate table zhiwei")
+    conn.commit()
+    for leixing in leixinglist:
+        zhiweilist=[] #复用数组每次都要记得清空
+        Initzhiwei3_1(leixing,zhiweilist)
+        kcxh=arrange_kc(kcxh,zhiweilist)
+    conn.commit()
+    conn.close()
