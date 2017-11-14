@@ -15,10 +15,10 @@ reload(sys)
 sys.setdefaultencoding('utf8')  
 import MySQLdb
 #------------------------------------------------全局变量设置区域--------------------------------------------------------------------
-maxrs=30 #每个考场设置人数
+maxrs=29 #每个考场设置人数
 maxkcxh=39   #考场序号初始1
 msdate=1
-conn= MySQLdb.connect( host='192.168.1.107', port = 3306, user='root', passwd='123123', db ='mianshi',charset='utf8')
+conn= MySQLdb.connect( host='192.168.1.107', port = 3306, user='root', passwd='123123', db ='sanzhiyifums',charset='utf8')
 cur = conn.cursor()
 #------------------------------------------------全局变量设置区域--------------------------------------------------------------------
 class zhiwei(object):
@@ -59,7 +59,7 @@ def arrange_kc(kcxh,zhiweilist):
         for item in sol:
             tmp.append(zhiweilist[item])
             query="insert into zhiwei (`dwmc`, `zwmc`, `leixing`, `rs`, `kcxh`,`msdate`) values('%s','%s','%s',%s,%s,%s)" % (zhiweilist[item].dwmc,zhiweilist[item].zwmc,zhiweilist[item].leixing,zhiweilist[item].rs,thiskcxh,msdate)
-            #cur.execute(query) #是否写入数据库开关
+            cur.execute(query) #还好今天把开关关了  开关
             print query
             sum=zhiweilist[item].rs+sum
         print u"共有",sum,u"人"
@@ -98,19 +98,6 @@ def show(c,w,res): #c背包容量，w重量数组，res状态数组
     return sol #sol数组存放了最优解的物品序号
 #---------------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
-    #leixinglist=['选调生','警察','公务员']#先排警察选调生再排公务员
-    #kcxh=1
-    #cur.execute("truncate table zhiwei")
-    #conn.commit()
-    #for leixing in leixinglist:
-        #zhiweilist=[] #复用数组每次都要记得清空
-        #Initzhiwei3_1(leixing,zhiweilist)
-        #kcxh=arrange_kc(kcxh,zhiweilist)
-    #print "计算非3：1职位"
-    #zhiweilist=[]
-    #Initzhiwei_non3_1(zhiweilist)
-    #kcxh=arrange_kc(kcxh,zhiweilist)
-
 #------------------------------3:1----------------------------------
     #kcxh=1
     #cur.execute("truncate table zhiwei")
@@ -136,21 +123,20 @@ if __name__ == "__main__":
     #conn.close()
 
 #------------------------------3:1----------------------------------
-    #leixinglist=['选调生','警察','公务员']#先排警察选调生再排公务员
-    #kcxh=1
-    #cur.execute("truncate table zhiwei")
-    #conn.commit()
-    #for leixing in leixinglist:
-        ##query="SELECT * FROM zwrstable where leixing='%s';" % (leixing)
-        #query="SELECT bkdw,bkzw,leixing,count(*) FROM ksinfo where leixing='%s' group by bkdw,bkzw ;" % (leixing)
-        #zhiweilist=[] #复用数组每次都要记得清空
-        #Initzhiwei(leixing,zhiweilist,query)
-        #kcxh=arrange_kc(kcxh,zhiweilist)
-    #kcxh=arrange_kc(kcxh,zhiweilist)
+    leixinglist=['选调生','警察','公务员']#先排警察选调生再排公务员
+    kcxh=1
+    cur.execute("truncate table zhiwei")
+    conn.commit()
+    for leixing in leixinglist:
+        #query="SELECT * FROM zwrstable where leixing='%s';" % (leixing)
+        query="SELECT bkdw,bkzw,leixing,count(*) FROM ksinfo where leixing='%s' group by bkdw,bkzw ;" % (leixing)
+        zhiweilist=[] #复用数组每次都要记得清空
+        Initzhiwei(leixing,zhiweilist,query)
+        kcxh=arrange_kc(kcxh,zhiweilist)
+    kcxh=arrange_kc(kcxh,zhiweilist)
 
-#------------------------------屁眼痛3:1----------------------------------
-    #query="SELECT * FROM zwrstable where leixing='%s';" % (leixing)
-    query="SELECT bkdw,bkzw,leixing,count(*) FROM ksinfo where leixing='%s' and bkdw regexp '大方'  group by bkdw,bkzw ;" % (leixing)
+#------------------------------三支一扶----------------------------------
+    query="SELECT bkdw,bkzw,leixing,count(*) FROM ksinfo  group by bkdw,bkzw ;"
     zhiweilist=[] #复用数组每次都要记得清空
     Initzhiwei(leixing,zhiweilist,query)
     kcxh=arrange_kc(kcxh,zhiweilist)
